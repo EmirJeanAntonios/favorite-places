@@ -65,6 +65,8 @@ const Header = () => {
                 key={index}
                 title={place.name}
                 description={place.display_name}
+                lat={place.lat}
+                lon={place.lon}
               />
             ))}
           </Input.DropDown>
