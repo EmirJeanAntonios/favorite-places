@@ -14,9 +14,11 @@ export const useGetRequest = (options: IUseGetRequest) => {
     queryKey: [options.key, options.params],
     queryFn: ({ queryKey }) => {
       const [_key, params] = queryKey;
-      return axiosClient.get(options.url, {
-        params,
-      }).then((res) => res.data);
+      return axiosClient
+        .get(options.url, {
+          params,
+        })
+        .then((res) => res.data);
     },
     ...options.options,
   });
