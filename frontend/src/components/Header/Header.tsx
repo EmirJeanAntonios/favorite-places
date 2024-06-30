@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useState } from "react";
 import Input from "../Input/Input";
 import { useGetRequest } from "../../hooks/useGetRequest";
 import useDebounceCallback from "../../hooks/useDebounceCallback";
@@ -6,7 +6,8 @@ import SearchBox from "./components/SearchBox/SearchBox";
 import { IPlaceApiResponse } from "../../interfaces/IPlaceApiResponse";
 
 const Header = () => {
-  const [query, setQuery] = React.useState("");
+  const [query, setQuery] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const places = useGetRequest({
     key: "places",
     url: "https://nominatim.openstreetmap.org/search?format=json",
@@ -19,15 +20,27 @@ const Header = () => {
   });
   const handleSearch = useDebounceCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      if (value == "" || value.length < 3) {
+        setIsDropdownOpen(false);
+        return;
+      }
       setQuery(e.target.value);
+      setIsDropdownOpen(true);
     },
     500
   );
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length >= 3 && places?.data?.length > 0) {
+      setIsDropdownOpen(true);
+    }
+  };
 
-  const isDropdownOpen = useMemo(
-    () => places.isSuccess && places?.data?.length > 0,
-    [places.isSuccess, places?.data]
-  );
+  const handleBlur = () => {
+    setIsDropdownOpen(false);
+  };
+
   return (
     <header className="flex justify-between items-center px-4 shadow-md z-[410] bg-emerald-500">
       <div>
@@ -38,6 +51,8 @@ const Header = () => {
           InputProps={{
             placeholder: "Search for places",
             onChange: handleSearch,
+            onFocus: handleFocus,
+            onBlur: handleBlur,
           }}
           className="lg:w-[500px]"
           slots={{
@@ -67,6 +82,7 @@ const Header = () => {
                 description={place.display_name}
                 lat={place.lat}
                 lon={place.lon}
+                setIsDropdownOpen={setIsDropdownOpen}
               />
             ))}
           </Input.DropDown>

@@ -6,6 +6,7 @@ interface SearchBoxProps {
   description: string;
   lat: string;
   lon: string;
+  setIsDropdownOpen: (isOpen: boolean) => void;
 }
 
 const SearchBox = (props: SearchBoxProps) => {
@@ -13,6 +14,7 @@ const SearchBox = (props: SearchBoxProps) => {
   const handleLatLonChange = () => {
     setLat(Number(props.lat));
     setLon(Number(props.lon));
+    props.setIsDropdownOpen(false);
   };
   return (
     <div className="px-2 flex flex-col cursor-pointer hover:shadow-sm" onClick={handleLatLonChange}>
