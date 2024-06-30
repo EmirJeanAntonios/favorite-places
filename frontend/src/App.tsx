@@ -3,7 +3,7 @@ import MapView from "./views/MapView/MapView";
 
 function App() {
   return (
-    <main className="h-screen grid grid-rows-[70px_auto]">
+    <main className="h-screen grid grid-rows-[50px_auto]">
       <Header />
       <MapView />
     </main>
