@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: node:16-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - '5173:5173'
+    command: sh -c "npm install && npm run dev"
+    depends_on:
+      - backend
+
+  backend:
+    image: node:16-alpine
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - '3001:3001'
+    command: sh -c "npm install && npm run dev"
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=mydatabase
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+    ports:
+      - '3306:3306'
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - '8080:80'
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: rootpassword
+    depends_on:
+      - mysql
+
+volumes:
+  mysql-data:
